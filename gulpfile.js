@@ -17,7 +17,7 @@ var cssProd = css + prod;
 
 // http://www.browsersync.io/docs/options/#option-proxy
 // ie. yousite.com
-var proxyUrl= 'kelvin_test.xenyo.net';
+var proxyUrl= 'localhost';
 
 gulp.task('browser-sync', function() {
     browserSync({

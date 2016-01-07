@@ -1,4 +1,4 @@
-# Gulp file for Less only
+# Gulp file for Less & js
 ---
 
 ###Prerequisites:

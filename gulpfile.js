@@ -4,32 +4,16 @@ var plumber = require('gulp-plumber');
 var rename = require("gulp-rename");
 var less = require('gulp-less');
 var sourcemaps = require('gulp-sourcemaps');
-var minifyCss = require('gulp-minify-css');
+var cleanCSS = require('gulp-clean-css');
 var babel = require('gulp-babel');
 var es2015 = require('babel-preset-es2015');
+var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var browserSync = require('browser-sync');
+var javascriptObfuscator = require('gulp-javascript-obfuscator');
 
-var css = 'css-dir/';
-var js = 'js-dir/';
-
-var src = '';
-var dev = '';
-var prod = '';
-
-var cssSrcFile = 'app.less';
-var cssDevFile = 'app.css';
-var cssProdFile = 'app.min.css';
-var cssSrc = css + src;
-var cssDev = css + dev;
-var cssProd = css + prod;
-
-var jsSrcFile = 'src/app.js';
-var jsDevFile = 'app.js';
-var jsProdFile = 'app.min.js';
-var jsSrc = js + src;
-var jsDev = js + dev;
-var jsProd = js + prod;
+var css = __dirname + '/css/';
+var js = __dirname + '/js/';
 
 var onError = function (err) {
     gutil.log(gutil.colors.red("ERROR", "less"), err);
@@ -49,53 +33,66 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('build-css', function() {
-    return gulp.src([cssSrc + cssSrcFile])
+    return gulp.src([css + 'src/**/*.less', '!' + css + '**/_*.less'])
     .pipe(sourcemaps.init())
     .pipe(plumber())
     .pipe(less().on('error', onError))
-    .pipe(rename(cssDevFile))
+    .pipe(rename(function(path) {
+        path.extname = '.css';
+    }))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(cssDev))
+    .pipe(gulp.dest(css))
     .pipe(browserSync.reload({stream:true}));
 });
 
 gulp.task('build-css-prod', function() {
-    return gulp.src([cssSrc + cssSrcFile])
-    .pipe(less().on('error', onError))
-    .pipe(minifyCss())
-    .pipe(rename(cssProdFile))
-    .pipe(gulp.dest(cssProd));
+    return gulp.src([css + 'src/**/*.less', '!' + css + '**/_*.less'])
+    .pipe(less())
+    .pipe(cleanCSS())
+    .pipe(rename(function(path) {
+        path.extname = '.min.css';
+    }))
+    .pipe(gulp.dest(css));
 });
 
 gulp.task('watch-css', function() {
-    return gulp.watch(cssSrc + '*.less', ['build-css']);
+    return gulp.watch(css + '**/*.less', ['build-css']);
 });
 
 gulp.task('build-js', function() {
-    return gulp.src([jsSrc + jsSrcFile])
+    return gulp.src([js + 'src/**/*.js'])
     .pipe(sourcemaps.init())
     .pipe(babel({
         presets: [es2015]
     }))
     .on('error', onError)
+    //.pipe(rename(function(path) {
+        //path.basename += '';
+    //))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(jsDev))
+    .pipe(gulp.dest(js))
     .pipe(browserSync.reload({stream:true, once: true}));
 });
 
 gulp.task('build-js-prod', function() {
-    return gulp.src([jsSrc + jsSrcFile])
+    return gulp.src([js + 'src/**/*.js'])
     .pipe(babel({
         presets: [es2015]
     }))
     .on('error', onError)
-    .pipe(uglify())
-    .pipe(rename(jsProdFile))
-    .pipe(gulp.dest(jsProd));
+    .pipe(concat('app.js'))
+    .pipe(uglify({compress:true}))
+    .pipe(javascriptObfuscator({
+        compact:true
+    }))
+    .pipe(rename(function(path) {
+        path.extname = '.min.js';
+    }))
+    .pipe(gulp.dest(js));
 });
 
 gulp.task('watch-js', function() {
-    return gulp.watch(jsSrc + '**/*.js', ['build-js']);
+    return gulp.watch(js + 'src/**/*.js', ['build-js']);
 });
 
 gulp.task('default', ['browser-sync', 'build-css', 'watch-css', 'build-js', 'watch-js']);

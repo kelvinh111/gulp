@@ -10,7 +10,6 @@ var es2015 = require('babel-preset-es2015');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var browserSync = require('browser-sync');
-var javascriptObfuscator = require('gulp-javascript-obfuscator');
 
 var css = __dirname + '/css/';
 var js = __dirname + '/js/';
@@ -82,9 +81,6 @@ gulp.task('build-js-prod', function() {
     .on('error', onError)
     .pipe(concat('app.js'))
     .pipe(uglify({compress:true}))
-    .pipe(javascriptObfuscator({
-        compact:true
-    }))
     .pipe(rename(function(path) {
         path.extname = '.min.js';
     }))

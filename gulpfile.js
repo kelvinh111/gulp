@@ -16,8 +16,6 @@ let themePath = __dirname + '/../'
 let css = themePath + '/css/'
 let js = themePath + '/js/'
 
-console.log(css)
-
 let onError = function(err) {
     gutil.log(gutil.colors.red("ERROR", "less"), err)
     this.emit("end", new gutil.PluginError("less", err, {

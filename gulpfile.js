@@ -11,8 +11,12 @@ let concat = require('gulp-concat')
 let uglify = require('gulp-uglify')
 let browserSync = require('browser-sync')
 
-let css = __dirname + '/css/'
-let js = __dirname + '/js/'
+// change this
+let themePath = __dirname + '/../'
+let css = themePath + '/css/'
+let js = themePath + '/js/'
+
+console.log(css)
 
 let onError = function(err) {
     gutil.log(gutil.colors.red("ERROR", "less"), err)
@@ -24,7 +28,7 @@ let onError = function(err) {
 // change the localhost to your url
 // ie. yousite.com
 // http://www.browsersync.io/docs/options/#option-proxy
-let proxyUrl = 'localhost'
+let proxyUrl = 'lab.kelvinh.studio/xenyo_site/static'
 
 gulp.task('browser-sync', () => {
     browserSync({

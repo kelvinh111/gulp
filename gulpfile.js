@@ -1,95 +1,105 @@
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var plumber = require('gulp-plumber');
-var rename = require("gulp-rename");
-var less = require('gulp-less');
-var sourcemaps = require('gulp-sourcemaps');
-var cleanCSS = require('gulp-clean-css');
-var babel = require('gulp-babel');
-var es2015 = require('babel-preset-es2015');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var browserSync = require('browser-sync');
+let gulp = require('gulp')
+let gutil = require('gulp-util')
+let plumber = require('gulp-plumber')
+let rename = require("gulp-rename")
+let less = require('gulp-less')
+let sourcemaps = require('gulp-sourcemaps')
+let cleanCSS = require('gulp-clean-css')
+let babel = require('gulp-babel')
+let es2015 = require('babel-preset-es2015')
+let concat = require('gulp-concat')
+let uglify = require('gulp-uglify')
+let browserSync = require('browser-sync')
 
-var css = __dirname + '/css/';
-var js = __dirname + '/js/';
+let css = __dirname + '/css/'
+let js = __dirname + '/js/'
 
-var onError = function (err) {
-    gutil.log(gutil.colors.red("ERROR", "less"), err);
-    this.emit("end", new gutil.PluginError("less", err, { showStack: true }));
-};
+let onError = function(err) {
+    gutil.log(gutil.colors.red("ERROR", "less"), err)
+    this.emit("end", new gutil.PluginError("less", err, {
+        showStack: true
+    }))
+}
 
-// http://www.browsersync.io/docs/options/#option-proxy
+// change the localhost to your url
 // ie. yousite.com
-var proxyUrl= 'localhost';
+// http://www.browsersync.io/docs/options/#option-proxy
+let proxyUrl = 'localhost'
 
-gulp.task('browser-sync', function() {
+gulp.task('browser-sync', () => {
     browserSync({
         proxy: proxyUrl,
         ws: true,
         // port: 5000
-    });
-});
+    })
+})
 
-gulp.task('build-css', function() {
+gulp.task('build-css', () => {
     return gulp.src([css + 'src/**/*.less', '!' + css + '**/_*.less'])
-    .pipe(sourcemaps.init())
-    .pipe(plumber())
-    .pipe(less().on('error', onError))
-    .pipe(rename(function(path) {
-        path.extname = '.css';
-    }))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(css))
-    .pipe(browserSync.reload({stream:true}));
-});
+        .pipe(sourcemaps.init())
+        .pipe(plumber())
+        .pipe(less().on('error', onError))
+        .pipe(rename(path => {
+            path.extname = '.css'
+        }))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(css))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+})
 
-gulp.task('build-css-prod', function() {
+gulp.task('build-css-prod', () => {
     return gulp.src([css + 'src/**/*.less', '!' + css + '**/_*.less'])
-    .pipe(less())
-    .pipe(cleanCSS())
-    .pipe(rename(function(path) {
-        path.extname = '.min.css';
-    }))
-    .pipe(gulp.dest(css));
-});
+        .pipe(less())
+        .pipe(cleanCSS())
+        .pipe(rename(path => {
+            path.extname = '.min.css'
+        }))
+        .pipe(gulp.dest(css))
+})
 
-gulp.task('watch-css', function() {
-    return gulp.watch(css + '**/*.less', ['build-css']);
-});
+gulp.task('watch-css', () => {
+    return gulp.watch(css + '**/*.less', ['build-css'])
+})
 
-gulp.task('build-js', function() {
+gulp.task('build-js', () => {
     return gulp.src([js + 'src/**/*.js'])
-    .pipe(sourcemaps.init())
-    .pipe(babel({
-        presets: [es2015]
-    }))
-    .on('error', onError)
-    //.pipe(rename(function(path) {
-        //path.basename += '';
-    //))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(js))
-    .pipe(browserSync.reload({stream:true, once: true}));
-});
+        .pipe(sourcemaps.init())
+        .pipe(babel({
+            presets: [es2015]
+        }))
+        .on('error', onError)
+        //.pipe(rename(function(path) {
+        //path.basename += ''
+        //))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(js))
+        .pipe(browserSync.reload({
+            stream: true,
+            once: true
+        }))
+})
 
-gulp.task('build-js-prod', function() {
+gulp.task('build-js-prod', () => {
     return gulp.src([js + 'src/**/*.js'])
-    .pipe(babel({
-        presets: [es2015]
-    }))
-    .on('error', onError)
-    .pipe(concat('app.js'))
-    .pipe(uglify({compress:true}))
-    .pipe(rename(function(path) {
-        path.extname = '.min.js';
-    }))
-    .pipe(gulp.dest(js));
-});
+        .pipe(babel({
+            presets: [es2015]
+        }))
+        .on('error', onError)
+        .pipe(concat('app.js'))
+        .pipe(uglify({
+            compress: true
+        }))
+        .pipe(rename(path => {
+            path.extname = '.min.js'
+        }))
+        .pipe(gulp.dest(js))
+})
 
-gulp.task('watch-js', function() {
-    return gulp.watch(js + 'src/**/*.js', ['build-js']);
-});
+gulp.task('watch-js', () => {
+    return gulp.watch(js + 'src/**/*.js', ['build-js'])
+})
 
-gulp.task('default', ['browser-sync', 'build-css', 'watch-css', 'build-js', 'watch-js']);
-gulp.task('prod', ['build-css-prod', 'build-js-prod']);
+gulp.task('default', ['browser-sync', 'build-css', 'watch-css', 'build-js', 'watch-js'])
+gulp.task('prod', ['build-css-prod', 'build-js-prod'])

@@ -17,6 +17,7 @@ let js = themePath + '/js/'
 
 function onError(err) {
     logger.error(err)
+    this.emit('end')
 }
 
 // change the localhost to your url

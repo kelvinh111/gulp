@@ -1,5 +1,4 @@
 let gulp = require('gulp')
-let gutil = require('gulp-util')
 let plumber = require('gulp-plumber')
 let rename = require("gulp-rename")
 let less = require('gulp-less')
@@ -9,17 +8,15 @@ let babel = require('gulp-babel')
 let concat = require('gulp-concat')
 let uglify = require('gulp-uglify')
 let browserSync = require('browser-sync')
+let logger = require('gulplog');
 
 // change this
-let themePath = __dirname + '/../'
+let themePath = __dirname + '/'
 let css = themePath + '/css/'
 let js = themePath + '/js/'
 
-let onError = function(err) {
-    gutil.log(gutil.colors.red("ERROR", "less"), err)
-    this.emit("end", new gutil.PluginError("less", err, {
-        showStack: true
-    }))
+function onError(err) {
+    logger.error(err)
 }
 
 // change the localhost to your url

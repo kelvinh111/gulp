@@ -6,7 +6,6 @@ let less = require('gulp-less')
 let sourcemaps = require('gulp-sourcemaps')
 let cleanCSS = require('gulp-clean-css')
 let babel = require('gulp-babel')
-let es2015 = require('babel-preset-es2015')
 let concat = require('gulp-concat')
 let uglify = require('gulp-uglify')
 let browserSync = require('browser-sync')
@@ -69,7 +68,7 @@ gulp.task('build-js', () => {
     return gulp.src([js + 'src/**/*.js'])
         .pipe(sourcemaps.init())
         .pipe(babel({
-            presets: [es2015]
+            presets: ["env"]
         }))
         .on('error', onError)
         //.pipe(rename(function(path) {
@@ -86,7 +85,7 @@ gulp.task('build-js', () => {
 gulp.task('build-js-prod', () => {
     return gulp.src([js + 'src/**/*.js'])
         .pipe(babel({
-            presets: [es2015]
+            presets: ["env"]
         }))
         .on('error', onError)
         .pipe(concat('app.js'))
